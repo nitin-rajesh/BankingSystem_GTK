@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "bankdata.h"
 
 int main(int argc, char *argv[]) {
     GtkWidget *window;
