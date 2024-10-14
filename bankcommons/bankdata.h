@@ -1,12 +1,12 @@
 #ifndef BANK_DATA
 #define BANK_DATA
 
-enum usertype{Customer,Banker,Manager,Admin};
+typedef enum usertype{CUSTOMER,BANKER,MANAGER,ADMIN,NA} Usertype;
 
 struct UserDetails{
     char username[128];
     char password[128];
-    usertype role;
+    Usertype role;
 };
 
 #endif

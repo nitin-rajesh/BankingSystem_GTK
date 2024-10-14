@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.0"/>
+
+  <object class="GtkWindow" id="login_window">
+    <property name="title">Login Window</property>
+    <property name="default-width">400</property>
+    <property name="default-height">300</property>
+    <property name="window-position">center</property>
+
+    <child>
+      <object class="GtkBox" id="vbox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">20</property>
+        <property name="margin">20</property>
+        <property name="halign">center</property> <!-- Horizontal center alignment -->
+        <property name="valign">center</property> <!-- Vertical center alignment -->
+
+        <!-- Title Label -->
+        <child>
+          <object class="GtkLabel" id="title_label">
+            <property name="label">GTK Banking</property>
+            <attributes>
+              <attribute name="scale" value="2"/>
+            </attributes>
+          </object>
+        </child>
+
+        <!-- Grid for Username, Password, and User Type -->
+        <child>
+          <object class="GtkGrid" id="grid">
+            <property name="column-spacing">10</property>
+            <property name="row-spacing">10</property>
+            <property name="halign">center</property> <!-- Center the grid horizontally -->
+            <property name="valign">center</property> <!-- Center the grid vertically -->
+
+            <child>
+              <object class="GtkLabel" id="username_label">
+                <property name="label">Username:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkEntry" id="username_entry"/>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="password_label">
+                <property name="label">Password:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkEntry" id="password_entry">
+                <property name="visibility">false</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="user_type_label">
+                <property name="label">User Type:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkComboBoxText" id="user_type_combo">
+                <items>
+                  <item translatable="yes">Customer</item>
+                  <item translatable="yes">Banker</item>
+                  <item translatable="yes">Manager</item>
+                  <item translatable="yes">Admin</item>
+                </items>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="login_button">
+                <property name="label">Login</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
