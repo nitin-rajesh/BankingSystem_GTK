@@ -1,6 +1,26 @@
 #include <gtk/gtk.h>
 #include <string.h>
-#include "bankcommons/bankdata.h"
+#include "banking/commons/bankstructs.h"
+
+void open_new_window() {
+    GtkBuilder *builder;
+    GtkWidget *window;
+    GError *error = NULL;
+
+    // Load the UI file
+    builder = gtk_builder_new();
+    if (gtk_builder_add_from_file(builder, "bankpages/home_page.ui", &error) == 0) {
+        g_printerr("Error loading UI file: %s\n", error->message);
+        g_clear_error(&error);
+    }
+
+    // Get the main window and connect the destroy signal
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Show the window and start the GTK main loop
+    gtk_widget_show_all(window);
+}
 
 void on_login_button_clicked(GtkButton *button, gpointer user_data) {
     // Retrieve widgets from the builder
@@ -34,6 +54,8 @@ void on_login_button_clicked(GtkButton *button, gpointer user_data) {
     else 
         details.role = NA;
 
+    open_new_window();
+
 }
 
 int main(int argc, char *argv[]) {
@@ -41,10 +63,10 @@ int main(int argc, char *argv[]) {
     GtkWidget *window;
     GError *error = NULL;
 
-    // Initialize GTK
+    //Init GTK
     gtk_init(&argc, &argv);
 
-    // Load the XML UI file
+    //Load XML UI file
     builder = gtk_builder_new();
     if (gtk_builder_add_from_file(builder, "bankpages/login_page.ui", &error) == 0) {
         g_printerr("Error loading UI file: %s\n", error->message);
@@ -52,21 +74,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Get the main window and connect the destroy signal
+    // Get main window and connect destroy signal
     window = GTK_WIDGET(gtk_builder_get_object(builder, "login_window"));
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    // Connect the login button to its callback function
+    //Connect login button to callback function
     GtkWidget *login_button = GTK_WIDGET(gtk_builder_get_object(builder, "login_button"));
     g_signal_connect(login_button, "clicked", G_CALLBACK(on_login_button_clicked), builder);
 
-    // Show the window and all its child widgets
     gtk_widget_show_all(window);
 
-    // Start the GTK main loop
     gtk_main();
 
-    // Free the builder object
     g_object_unref(builder);
 
     return 0;

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.0"/>
+
+  <object class="GtkWindow" id="main_window">
+    <property name="title">Banking home</property>
+    <property name="default-width">600</property>
+    <property name="default-height">400</property>
+    <property name="window-position">center</property>
+
+    <child>
+      <object class="GtkBox" id="main_vbox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <property name="margin">10</property>
+
+        <!-- Search Bar and Button -->
+        <child>
+          <object class="GtkBox" id="search_hbox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">5</property>
+
+            <child>
+              <object class="GtkEntry" id="search_entry">
+                <property name="hexpand">true</property> <!-- Make search bar expand -->
+                <property name="placeholder-text">Enter search query...</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="search_button">
+                <property name="label">Search</property>
+                <property name="width-request">80</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <!-- Text View for Multiline Input -->
+        <child>
+          <object class="GtkTextView" id="text_field">
+            <property name="wrap-mode">word</property>
+            <property name="pixels-above-lines">5</property>
+            <property name="height-request">50</property>
+            <property name="editable">false</property>  <!-- Disable input -->
+          </object>
+        </child>
+
+        <!-- List View and Buttons -->
+        <child>
+          <object class="GtkBox" id="content_hbox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">10</property>
+
+            <!-- List View -->
+            <child>
+              <object class="GtkScrolledWindow" id="list_view_scrolled_window">
+                <property name="expand">true</property>
+                <child>
+                  <object class="GtkTreeView" id="list_view"/>
+                </child>
+              </object>
+            </child>
+
+            <!-- Buttons to the Right of List View -->
+            <child>
+              <object class="GtkBox" id="buttons_vbox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">5</property>
+
+                <child>
+                  <object class="GtkButton" id="button_1">
+                    <property name="label">Add</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkButton" id="button_2">
+                    <property name="label">Edit</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkButton" id="button_3">
+                    <property name="label">Delete</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkButton" id="button_4">
+                    <property name="label">Refresh</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
