@@ -1,6 +1,10 @@
 #include<sys/time.h>
+#include"record_handler.h"
 #ifndef BANK_DATA
 #define BANK_DATA
+
+#define ACTIVE 1
+#define INACTIVE 0
 
 typedef short int boolean;
 
@@ -8,13 +12,13 @@ typedef enum usertype{CUSTOMER,BANKER,MANAGER,ADMIN,NA} Usertype;
 
 typedef enum txntype{WITHDRAWAL,DEPOSIT,LOAN_REQ,LOAN_PAYOFF,TRANSFER} TxnType;
 
-struct UserDetails{
+typedef struct userdetails{
     char username[128];
     char password[128];
     Usertype role;
-};
+}UserDetails;
 
-struct UserRecord{
+typedef struct userrecord{
     int userId;
     char username[128];
     char password[128];
@@ -22,25 +26,29 @@ struct UserRecord{
     char emailId[64];
     Usertype role;
     boolean isActive;
-};
+} UserRecord;
 
-struct AccountBalance{
+typedef struct accountbalance{
     int userId;
     double accBalance;
     boolean isActive;
-};
+}AccountBalance;
 
-struct TxnData{
+typedef struct txnlogs{
     int userId;
     double txnAmount;
+    time_t txnTimestamp;
     TxnType transaction;
-};
+}TxnLogs;
 
-struct LoadData{
+typedef struct loandata{
+    int userId;
+    int loadId;
+    int assignedBankerId;
     double loanRequest;
     double loanPaid;
     boolean loanApproved;
-};
+}LoanData;
 
 struct FeedBack{
     int userId;

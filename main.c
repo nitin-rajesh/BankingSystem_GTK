@@ -39,7 +39,7 @@ void on_login_button_clicked(GtkButton *button, gpointer user_data) {
     g_print("Password: %s\n", password);
     g_print("User Type: %s\n", user_type ? user_type : "None");
 
-    struct UserDetails details;
+    UserDetails details;
     strcpy(details.username,username);
     strcpy(details.password,password);
 
