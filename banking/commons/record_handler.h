@@ -8,12 +8,25 @@
 
 #define writeRecord(filename, data) ({        \
     int fd = open(filename,O_CREAT|O_WRONLY|O_APPEND, 0644); \
-    if(fd < 0)                                \
-        return -1;                            \
     flock(fd,LOCK_EX);                        \
     write(fd,&data,sizeof(data));             \
     flock(fd,LOCK_UN);                        \
     close(fd);                                \
+})
+
+#define writeRecordAt(filename, uid, newdata, dtype) ({    \
+    dtype ddata;                               \
+    int fd = open(filename,O_RDWR, 0644);      \
+    flock(fd,LOCK_EX);                         \
+    int cid = -1, bytesin = 1;                 \
+    while(cid != uid && bytesin > 0){          \
+        bytesin = read(fd,&ddata,sizeof(data)); \
+        cid = ddata.uid;                        \
+    }                                          \
+    lseek(fd,-sizeof(ddata),SEEK_CUR);          \
+    write(fd,&newdata,sizeof(newdata));         \
+    flock(fd,LOCK_UN);                         \
+    close(fd);                                 \
 })
 
 #define readRecord(filename, uid, data) ({     \
@@ -22,7 +35,7 @@
     int cid = -1, bytesin = 1;                 \
     while(cid != uid && bytesin > 0){          \
         bytesin = read(fd,&data,sizeof(data)); \
-        cid = data.userId;                     \
+        cid = data.uid;                        \
     }                                          \
     flock(fd,LOCK_UN);                         \
     close(fd);                                 \

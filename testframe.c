@@ -1,4 +1,4 @@
-#include"banking/common_tools.h"
+#include"banking/banktools_handler.h"
 #include"local_files.h"
 #include<stdio.h>
 
@@ -6,13 +6,21 @@ int main(){
     int nextUid;
     getNextId(USER_REPO,UserRecord,userId,nextUid);
 
-    Usertype role = ADMIN;
+    Usertype role = CUSTOMER;
 
-    UserRecord data = {nextUid,"hello_again","hello_pwd","Hello Again","hello.3@email.com",role,1};
+    UserRecord data = {nextUid,"hello_func","hello_pwd","Hello From Query","hello.3@email.com",role,1};
 
-    writeRecord(USER_REPO,data);
+    runBankingQuery(ADD_USER_ENTRY,data);
 
-    readLastRecord(USER_REPO,data);
+    // writeRecord(USER_REPO,data);
+
+    // readLastRecord(USER_REPO,data);
+
+    // int userId = data.userId;
+
+    // UserRecord newdata = {userId,"hi_lolz","hello_pwd","New Hi","hello.3@email.com",role,1};
+
+    // writeRecordAt(USER_REPO,userId,newdata,UserRecord);
 
     UserRecord *records = malloc(getRecSize(USER_REPO));
 
