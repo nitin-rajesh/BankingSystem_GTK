@@ -8,9 +8,9 @@
 
 typedef short int boolean;
 
-typedef enum usertype{CUSTOMER,BANKER,MANAGER,ADMIN,NA} Usertype;
+typedef enum usertype{CUSTOMER=1,BANKER,MANAGER,ADMIN,NA} Usertype;
 
-typedef enum txntype{WITHDRAWAL,DEPOSIT,LOAN_REQ,LOAN_PAYOFF,TRANSFER} TxnType;
+typedef enum txntype{WITHDRAWAL=1,DEPOSIT,LOAN_REQ,LOAN_PAYOFF,TRANSFER} TxnType;
 
 typedef struct userdetails{
     char username[128];

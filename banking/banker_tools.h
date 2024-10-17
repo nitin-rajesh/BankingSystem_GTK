@@ -7,6 +7,6 @@ int addCustomer(UserRecord record);
 
 int modifyCustomer(int userId, UserRecord newRecord);
 
-int processLoan(int userId, int loadId)
+int processLoan(int userId, int loadId);
 
 #endif
