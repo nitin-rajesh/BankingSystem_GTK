@@ -20,7 +20,7 @@
     flock(fd,LOCK_EX);                         \
     int cid = -1, bytesin = 1;                 \
     while(cid != uid && bytesin > 0){          \
-        bytesin = read(fd,&ddata,sizeof(data)); \
+        bytesin = read(fd,&ddata,sizeof(ddata)); \
         cid = ddata.uid;                        \
     }                                          \
     lseek(fd,-sizeof(ddata),SEEK_CUR);          \

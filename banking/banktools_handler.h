@@ -2,11 +2,12 @@
 #include<stdio.h>
 #include<stdarg.h>
 #include<stdlib.h>
+#include<time.h>
 
 #define USER_REPO "banking/db/user_repo.bin"
 #define ACCOUNT_REPO "banking/db/account_repo.bin"
 #define TXN_LOGS "banking/db/txn_logs.bin"
-#define LOAD_DATA "banking/db/load_data.bin"
+#define LOAN_DATA "banking/db/load_data.bin"
 #define FEEDBACK "banking/db/feedback.bin"
 
 typedef enum {
@@ -20,104 +21,170 @@ typedef enum {
     GET_TXN_HISTORY,
     GET_LOAN_DATA,
     GET_USER_RECORD,
-    GET_USER_ID_FROM_NAME,
+    GET_USERS_BY_ROLE,
     DEPOSIT_CASH,
     WITHDRAW_CASH,
     TRANSFER_CASH,
     APPLY_FOR_LOAN,
     SUBMIT_FEEDBACK,
-    ACTIVATE_CUSTOMER,
-    DEACTIVATE_CUSTOMER,
+    ACTIVATE_USER,
+    DEACTIVATE_USER,
     ASSIGN_BANKER_FOR_LOAN
 } FunctionType;
 
 // Switch-case to call appropriate functions
 void runBankingQuery(FunctionType funcType, ...) {
     va_list ptr;
+    va_start(ptr,funcType);
 
     switch (funcType) {
         case ADD_USER_ENTRY: {
-            va_start(ptr,funcType);
+            //Args: UserRecord recordToWrite
             UserRecord record = va_arg(ptr,UserRecord);
             writeRecord(USER_REPO,record);
             break;
         }
         case MODIFY_USER_ENTRY: {
-            UserRecord newRecord;
-            printf("modifyUserEntry result: %d\n", modifyUserEntry(1, newRecord));
-            break;
-        }
-        case ADD_CUSTOMER: {
-            UserRecord record;
-            printf("addCustomer result: %d\n", addCustomer(record));
-            break;
-        }
-        case MODIFY_CUSTOMER: {
-            UserRecord newRecord;
-            printf("modifyCustomer result: %d\n", modifyCustomer(2, newRecord));
+            //Args: int existingUserId, UserRecord recordToWrite
+            int userId = va_arg(ptr,int);
+            UserRecord newRecord = va_arg(ptr,UserRecord);
+            writeRecordAt(USER_REPO,userId,newRecord,UserRecord);
             break;
         }
         case PROCESS_LOAN: {
-            printf("processLoan result: %d\n", processLoan(1, 101));
-            break;
-        }
-        case GET_REC_SIZE: {
-            printf("getRecSize result: %ld\n", getRecSize("records.dat"));
+            //Args: int loanId
+            int loanId = va_arg(ptr,int);
+            LoanData data;
+            readRecord(LOAN_DATA,loanId,data);
+
+            if(data.loanApproved == INACTIVE){
+                data.loanApproved = ACTIVE;
+                TxnLogs loanBalance = {data.userId,
+                    data.loanRequest, time(NULL), LOAN_REQ};
+                writeRecord(TXN_LOGS,loanBalance);
+            }
             break;
         }
         case GET_BALANCE: {
-            printf("getBalance result: %.2f\n", getBalance("users.dat", 1));
+            //Args: int userId, double* balanceAmtVar
+            int userId = va_arg(ptr,int);
+            double* balance = va_arg(ptr,double*);
+            TxnLogs* logs = malloc(getRecSize(TXN_LOGS));
+            readAllRecords(TXN_LOGS,userId,logs);
+
+            *balance = 0;
+            int i = 0;
+            while(logs[i].userId > 0){
+                *balance += logs[i].txnAmount;
+            }
             break;
         }
-        // case GET_TXN_HISTORY: {
-        //     TxnLogs* logs = getTxnHistory("transactions.dat", 1);
-        //     printf("getTxnHistory result: %s\n", logs->details);
-        //     break;
-        // }
-        // case GET_LOAN_DATA: {
-        //     LoanData loan = getLoanData(1);
-        //     printf("getLoanData result: %.2f\n", loan.amount);
-        //     break;
-        // }
-        // case GET_USER_RECORD: {
-        //     UserRecord user = getUserRecord(1);
-        //     printf("getUserRecord result: %s\n", user.name);
-        //     break;
-        // }
-        case GET_USER_ID_FROM_NAME: {
-            printf("getUserIdFromName result: %d\n", getUserIdFromName("Alice"));
+        case GET_TXN_HISTORY: {
+            //Args: int userId, TxnLogs* txnLogsArr
+            int userId = va_arg(ptr,int);
+            TxnLogs* logs = va_arg(ptr,TxnLogs*);
+            logs = malloc(getRecSize(TXN_LOGS));
+            readAllRecords(TXN_LOGS,userId,logs);            
+            break;
+        }
+        case GET_LOAN_DATA: {
+            //Args: int userId, LoanData* loanDataArr
+            int userId = va_arg(ptr,int);
+            LoanData* logs = va_arg(ptr,LoanData*);
+            logs = malloc(getRecSize(LOAN_DATA));
+            readAllRecords(LOAN_DATA,userId,logs);            
+            break;
+        }
+        case GET_USER_RECORD: {
+            //Args: int userId, UserRecord* record
+            int userId = va_arg(ptr,int);
+            UserRecord* userRec = va_arg(ptr,UserRecord*);
+            userRec = malloc(sizeof(UserRecord));
+            UserRecord data;
+            readRecord(USER_REPO,userId,data);
+            *userRec = data;
+            break;
+        }
+        case GET_USERS_BY_ROLE: {
+            //Args: UserType role, UserRecord* recordsArr
+            Usertype role = va_arg(ptr,Usertype);
+            UserRecord* userArr = va_arg(ptr,UserRecord*);
+            userArr = malloc(sizeof(UserRecord));
+            readAllRecords(USER_REPO,role,userArr);
             break;
         }
         case DEPOSIT_CASH: {
-            printf("depositCash result: %d\n", depositCash(1, 1000.0));
+            //Args: int userId, double amountToDeposit
+            int userId = va_arg(ptr,int);
+            double amount = va_arg(ptr,double);
+            TxnLogs data = {userId,amount,time(NULL),DEPOSIT};
+            writeRecord(TXN_LOGS,data);
             break;
         }
         case WITHDRAW_CASH: {
-            printf("withdrawCash result: %d\n", withdrawCash(1, 500.0));
+            //Args: int userId, double amountToWithdraw
+            int userId = va_arg(ptr,int);
+            double amount = va_arg(ptr,double);
+            TxnLogs data = {userId,-amount,time(NULL),WITHDRAWAL};
+            writeRecord(TXN_LOGS,data);
             break;
         }
         case TRANSFER_CASH: {
-            printf("transferCash result: %d\n", transferCash(1, 2, 1000.0));
+            //Args: int userId, int destUserId, double amountToWithdraw
+            int userId = va_arg(ptr,int);
+            int destUserId = va_arg(ptr,int);
+            double amount = va_arg(ptr,double);
+            TxnLogs data = {userId,-amount,time(NULL),TRANSFER};
+            writeRecord(TXN_LOGS,data);    
+            userId = destUserId;
+            TxnLogs data = {userId,amount,time(NULL),DEPOSIT};
+            writeRecord(TXN_LOGS,data);
             break;
         }
         case APPLY_FOR_LOAN: {
-            printf("applyForLoan result: %d\n", applyForLoan(1, 20000.0));
+            //Args: int userId, double loanAmount
+            int userId = va_arg(ptr,int);
+            double amount = va_arg(ptr,double);
+            double loanId = 0;
+            getNextId(LOAN_DATA,LoanData,loanId,loanId);
+            LoanData data = {userId,loanId,0,amount,0,INACTIVE};
+            writeRecord(LOAN_DATA,data);    
             break;
         }
         case SUBMIT_FEEDBACK: {
-            printf("submitFeedback result: %d\n", submitFeedback(1, "Great service!"));
+            //Args: int userId, char* feedback;
+            int userId = va_arg(ptr,int);
+            char* feedback = va_arg(ptr,char*);
+            FeedBack data = {userId,feedback,INACTIVE};
+            writeRecord(FEEDBACK,data);    
             break;
         }
-        case ACTIVATE_CUSTOMER: {
-            printf("activateCustomer result: %d\n", activateCustomer(2));
+        case ACTIVATE_USER: {
+            //Args: int userId, char* feedback;
+            int userId = va_arg(ptr,int);
+            UserRecord data;
+            readRecord(USER_REPO,userId,data);
+            data.isActive = ACTIVE;
+            writeRecordAt(USER_REPO,userId,data,UserRecord);
             break;
         }
-        case DEACTIVATE_CUSTOMER: {
-            printf("deactivateCustomer result: %d\n", deactivateCustomer(2));
+        case DEACTIVATE_USER: {
+            //Args: int userId, char* feedback;
+            int userId = va_arg(ptr,int);
+            UserRecord data;
+            readRecord(USER_REPO,userId,data);
+            data.isActive = INACTIVE;
+            writeRecordAt(USER_REPO,userId,data,UserRecord);
             break;
         }
         case ASSIGN_BANKER_FOR_LOAN: {
-            printf("assignBankerForLoan result: %d\n", assignBankerForLoan(10));
+            //Args: int loanId, int bankerId
+            int loanId = va_arg(ptr,int);
+            int bankerId = va_arg(ptr,int);
+            LoanData data;
+            readRecord(LOAN_DATA,loanId,data);
+            data.assignedBankerId = bankerId;
+            writeRecordAt(LOAN_DATA,loanId,data,LoanData);
             break;
         }
         default:

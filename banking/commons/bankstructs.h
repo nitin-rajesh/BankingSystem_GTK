@@ -43,17 +43,17 @@ typedef struct txnlogs{
 
 typedef struct loandata{
     int userId;
-    int loadId;
+    int loanId;
     int assignedBankerId;
     double loanRequest;
     double loanPaid;
     boolean loanApproved;
 }LoanData;
 
-struct FeedBack{
+typedef struct feedback{
     int userId;
     char feedBack[1024];
     boolean isRead;
-};
+}FeedBack;
 
 #endif
