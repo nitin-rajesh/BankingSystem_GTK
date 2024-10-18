@@ -3,14 +3,15 @@
 #include<stdio.h>
 
 int main(){
-    int nextUid;
-    getNextId(USER_REPO,UserRecord,userId,nextUid);
 
-    Usertype role = CUSTOMER;
+    Usertype role = ADMIN;
 
-    UserRecord data = {nextUid,"hello_func","hello_pwd","Hello From Query","hello.3@email.com",role,1};
+    UserRecord data = {0,"hello_db","hello_pwd","Hello From Crud","hello.3@email.com",role,1};
 
-    runBankingQuery(ADD_USER_ENTRY,data);
+    DataBlock dataBlock = {ADD_USER_ENTRY,0,0.0,NULL};
+    copyToPayload(data,dataBlock);
+
+    runBankingQuery(dataBlock);
 
     // writeRecord(USER_REPO,data);
 

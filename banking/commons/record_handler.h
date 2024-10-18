@@ -2,6 +2,7 @@
 #include<unistd.h>
 #include<stdlib.h>
 #include<sys/file.h>
+#include<sys/stat.h>
 
 #ifndef RECORD_HANDLER
 #define RECORD_HANDLER
@@ -68,5 +69,14 @@
     readLastRecord(filename,temp);          \
     nextId = temp.idType + 1;               \
 })
+
+long getRecSize(char *filename){
+    struct stat fileStat;
+
+    if (stat(filename, &fileStat) == -1) 
+        return -1;  
+        
+    return fileStat.st_size;
+}
 
 #endif

@@ -1,16 +1,12 @@
 #include<sys/time.h>
 #include"record_handler.h"
+#include"bankenums.h"
 #ifndef BANK_DATA
 #define BANK_DATA
 
 #define ACTIVE 1
 #define INACTIVE 0
 
-typedef short int boolean;
-
-typedef enum usertype{CUSTOMER=1,BANKER,MANAGER,ADMIN,NA} Usertype;
-
-typedef enum txntype{WITHDRAWAL=1,DEPOSIT,LOAN_REQ,LOAN_PAYOFF,TRANSFER} TxnType;
 
 typedef struct userdetails{
     char username[128];
