@@ -10,15 +10,21 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
 
     DataBlock blockToReturn;
 
+    printf("Running banking query\n");
+
     int nextUid;
     getNextId(USER_REPO,UserRecord,userId,nextUid);
 
     int nextLoanId;
     getNextId(LOAN_DATA,LoanData,loanId,nextLoanId);
 
+    printf("Crud op: %d\n",dataBlock.crudOp);
+
+
     switch (dataBlock.crudOp) {
         case ADD_USER_ENTRY: {
             //Args: UserRecord recordToWrite
+            printf("Adding user entry to %s",USER_REPO);
             UserRecord record;
             initPayload(UserRecord,record,dataBlock);
 
@@ -154,8 +160,8 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
             //Args: int userId, char* feedback;
             int userId = dataBlock.id;
             char feedback[1024];
-            strcpy(feedback,(char*)dataBlock.payload);
-            FeedBack data = {userId,feedback,INACTIVE};
+            FeedBack data = {userId,"Feedback",INACTIVE};
+            strcpy(data.feedBack,(char*)dataBlock.payload);
             writeRecord(FEEDBACK,data);    
             break;
         }
@@ -192,5 +198,8 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
             printf("Invalid function type\n");
             break;
     }
+
+    printf("Finished banking query\n");
+
     return blockToReturn;
 }

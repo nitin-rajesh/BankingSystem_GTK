@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "network_handler.h": "c",
+        "banking_client.h": "c"
+    }
+}

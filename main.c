@@ -1,12 +1,32 @@
-#include <gtk/gtk.h>
-#include <string.h>
-#include "banking/commons/bankstructs.h"
+#include<gtk/gtk.h>
+#include<string.h>
+#include"banking_client.h" 
 
-void open_new_window() {
+
+void show_alert(GtkWidget *parent_window, char *alertmsg) {
+    GtkWidget *dialog;
+
+    // Create a new message dialog
+    dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window),
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_INFO,
+                                    GTK_BUTTONS_OK,
+                                    "Invalid login credentials");
+
+    gtk_window_set_title(GTK_WINDOW(dialog), "Alert");
+
+    // Run the dialog and wait for a response
+    gtk_dialog_run(GTK_DIALOG(dialog));
+
+    // Destroy the dialog after closing
+    gtk_widget_destroy(dialog);
+}
+
+void open_new_window(GtkWidget *first_window) {
     GtkBuilder *builder;
     GtkWidget *window;
     GError *error = NULL;
-
+    gtk_widget_destroy(first_window);
     // Load the UI file
     builder = gtk_builder_new();
     if (gtk_builder_add_from_file(builder, "bankpages/home_page.ui", &error) == 0) {
@@ -29,32 +49,22 @@ void on_login_button_clicked(GtkButton *button, gpointer user_data) {
     GtkEntry *password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
     GtkComboBoxText *user_type_combo = GTK_COMBO_BOX_TEXT(gtk_builder_get_object(builder, "user_type_combo"));
 
+    GtkWidget *first_window = GTK_WIDGET(gtk_builder_get_object(builder, "first_window"));
     // Get text from the entries and combo box
     const gchar *username = gtk_entry_get_text(username_entry);
     const gchar *password = gtk_entry_get_text(password_entry);
     const gchar *user_type = gtk_combo_box_text_get_active_text(user_type_combo);
+
 
     // Print the collected data
     g_print("Username: %s\n", username);
     g_print("Password: %s\n", password);
     g_print("User Type: %s\n", user_type ? user_type : "None");
 
-    UserDetails details;
-    strcpy(details.username,username);
-    strcpy(details.password,password);
+    if(validateUser(username,password))
+        open_new_window(first_window);
 
-    if(strcmp(user_type,"Customer")==0)
-        details.role = CUSTOMER;
-    else if(strcmp(user_type,"Admin")==0)
-        details.role = ADMIN;
-    else if(strcmp(user_type,"Banker")==0)
-        details.role = BANKER;
-    else if(strcmp(user_type,"Manager")==0)
-        details.role = MANAGER;
-    else 
-        details.role = NA;
-
-    open_new_window();
+    else show_alert(first_window,"Invalid login credentials");
 
 }
 
@@ -62,6 +72,8 @@ int main(int argc, char *argv[]) {
     GtkBuilder *builder;
     GtkWidget *window;
     GError *error = NULL;
+
+    initBankingClient();
 
     //Init GTK
     gtk_init(&argc, &argv);
