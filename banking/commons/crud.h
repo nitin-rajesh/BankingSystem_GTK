@@ -8,10 +8,16 @@
     varname = *temp;                               \
 })
 
-#define copyToPayload(varname, dblock)({             \
+#define copyToPayload(varname, dblock) ({            \
     dblock.payload = malloc(sizeof(varname));        \
     memcpy(dblock.payload,&varname,sizeof(varname)); \
 })
+
+#define copyArrToPayload(varname, dblock) ({   \
+    dblock.payload = malloc(sizeof(varname));  \
+    memcpy(dblock.payload,varname,sizeof(varname));       \
+})
+
 
 typedef struct dataBlock{
     FunctionType crudOp;

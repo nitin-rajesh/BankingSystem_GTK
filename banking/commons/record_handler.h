@@ -7,6 +7,8 @@
 #ifndef RECORD_HANDLER
 #define RECORD_HANDLER
 
+long getRecSize(char*);
+
 #define writeRecord(filename, data) ({        \
     int fd = open(filename,O_CREAT|O_WRONLY|O_APPEND, 0644); \
     flock(fd,LOCK_EX);                        \
@@ -67,8 +69,11 @@
 #define getNextId(filename, recordType, idType, nextId) ({  \
     recordType temp;                        \
     readLastRecord(filename,temp);          \
-    nextId = temp.idType + 1;               \
+    nextId = temp.idType < 1?1:temp.idType + 1;               \
 })
+
+#define getArrSize(filename,datatype) (getRecSize(filename)/sizeof(datatype))
+
 
 long getRecSize(char *filename){
     struct stat fileStat;

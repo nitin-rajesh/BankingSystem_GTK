@@ -1,37 +1,28 @@
 #include"commons/crud.h"
+#include"configs/repo_loc.h"
 #include<stdio.h>
 #include<stdarg.h>
 #include<stdlib.h>
 #include<time.h>
 #include<string.h>
 
-#define USER_REPO "db/user_repo.bin"
-#define ACCOUNT_REPO "db/account_repo.bin"
-#define TXN_LOGS "db/txn_logs.bin"
-#define LOAN_DATA "db/load_data.bin"
-#define FEEDBACK "db/feedback.bin"
+DataBlock runBankingQuery(DataBlock dataBlock) {
 
-
-// Switch-case to call appropriate functions
-DataBlock runBankingQuery(DataBlock dataBlock,...) {
-    va_list ptr;
-    va_start(ptr,dataBlock);
-
-    DataBlock returnData;
+    DataBlock blockToReturn;
 
     int nextUid;
     getNextId(USER_REPO,UserRecord,userId,nextUid);
 
     int nextLoanId;
-    getNextId(LOAN_DATA,LoanData,loanId,nextUid);
-
+    getNextId(LOAN_DATA,LoanData,loanId,nextLoanId);
 
     switch (dataBlock.crudOp) {
         case ADD_USER_ENTRY: {
             //Args: UserRecord recordToWrite
             UserRecord record;
             initPayload(UserRecord,record,dataBlock);
-            record.userId = nextUid+1;
+
+            record.userId = nextUid;
             writeRecord(USER_REPO,record);
             break;
         }
@@ -61,55 +52,53 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
             //Args: int userId, double* balanceAmtVar
             int userId = dataBlock.id;
             double balance = 0.0;
-            TxnLogs* logs = malloc(getRecSize(TXN_LOGS));
+            TxnLogs logs[getArrSize(TXN_LOGS,TxnLogs)];
             readAllRecords(TXN_LOGS,userId,logs);
 
             int i = 0;
             while(logs[i].userId > 0){
                 balance += logs[i].txnAmount;
             }
-            returnData.amount = balance;
+            blockToReturn.amount = balance;
             break;
         }
         case GET_TXN_HISTORY: {
             //Args: int userId, TxnLogs* txnLogsArr
-            int userId = va_arg(ptr,int);
-            TxnLogs* logs = va_arg(ptr,TxnLogs*);
-            logs = malloc(getRecSize(TXN_LOGS));
-            readAllRecords(TXN_LOGS,userId,logs);            
+            int userId = dataBlock.id;
+            TxnLogs logs[getArrSize(TXN_LOGS,TxnLogs)];
+            readAllRecords(TXN_LOGS,userId,logs); 
+            copyArrToPayload(logs,blockToReturn);         
             break;
         }
         case GET_LOAN_DATA: {
             //Args: int userId, LoanData* loanDataArr
-            int userId = va_arg(ptr,int);
-            LoanData* logs = va_arg(ptr,LoanData*);
-            logs = malloc(getRecSize(LOAN_DATA));
-            readAllRecords(LOAN_DATA,userId,logs);            
+            int userId = dataBlock.id;
+            LoanData logs[getArrSize(LOAN_DATA,LoanData)];
+            readAllRecords(LOAN_DATA,userId,logs); 
+            copyArrToPayload(logs,blockToReturn);           
             break;
         }
         case GET_USER_RECORD: {
             //Args: int userId, UserRecord* record
-            int userId = va_arg(ptr,int);
-            UserRecord* userRec = va_arg(ptr,UserRecord*);
-            userRec = malloc(sizeof(UserRecord));
+            int userId = dataBlock.id;
             UserRecord data;
             readRecord(USER_REPO,userId,data);
-            *userRec = data;
+            copyToPayload(data,blockToReturn);
             break;
         }
         case GET_USERS_BY_ROLE: {
             //Args: UserType role, UserRecord* recordsArr
-            Usertype role = va_arg(ptr,Usertype);
-            UserRecord* userArr = va_arg(ptr,UserRecord*);
-            userArr = malloc(sizeof(UserRecord));
+            Usertype role;
+            initPayload(Usertype,role,dataBlock);
+            UserRecord userArr[getArrSize(USER_REPO,UserRecord)];
             readAllRecords(USER_REPO,role,userArr);
+            copyArrToPayload(userArr,blockToReturn);
             break;
         }
         case GET_USER_BY_NAME: {
             //Args: char* username, UserRecord* record
-            char* username = va_arg(ptr,char*);
-            UserRecord* userRec = va_arg(ptr,UserRecord*);
-            UserRecord* userArr = malloc(sizeof(UserRecord));
+            char* username = (char*)dataBlock.payload;
+            UserRecord userArr[getArrSize(USER_REPO,UserRecord)];
             boolean isActive = ACTIVE;
             readAllRecords(USER_REPO,isActive,userArr);
             int i = 0;
@@ -118,30 +107,32 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
                     break;
                 i++;
             }
-            *userRec = userArr[i];
+            UserRecord temp = userArr[i];
+            copyToPayload(temp,blockToReturn);
             break;
         } 
         case DEPOSIT_CASH: {
             //Args: int userId, double amountToDeposit
-            int userId = va_arg(ptr,int);
-            double amount = va_arg(ptr,double);
+            int userId = dataBlock.id;
+            double amount = dataBlock.amount;
             TxnLogs data = {userId,amount,time(NULL),DEPOSIT};
             writeRecord(TXN_LOGS,data);
             break;
         }
         case WITHDRAW_CASH: {
             //Args: int userId, double amountToWithdraw
-            int userId = va_arg(ptr,int);
-            double amount = va_arg(ptr,double);
+            int userId = dataBlock.id;
+            double amount = dataBlock.amount;
             TxnLogs data = {userId,-amount,time(NULL),WITHDRAWAL};
             writeRecord(TXN_LOGS,data);
             break;
         }
         case TRANSFER_CASH: {
             //Args: int userId, int destUserId, double amountToWithdraw
-            int userId = va_arg(ptr,int);
-            int destUserId = va_arg(ptr,int);
-            double amount = va_arg(ptr,double);
+            int userId = dataBlock.id;
+            double amount = dataBlock.amount;            
+            int destUserId;
+            initPayload(int,destUserId,dataBlock);
             TxnLogs data = {userId,-amount,time(NULL),TRANSFER};
             writeRecord(TXN_LOGS,data);    
             userId = destUserId;
@@ -151,8 +142,8 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
         }
         case APPLY_FOR_LOAN: {
             //Args: int userId, double loanAmount
-            int userId = va_arg(ptr,int);
-            double amount = va_arg(ptr,double);
+            int userId = dataBlock.id;
+            double amount = dataBlock.amount;            
             double loanId = 0;
             getNextId(LOAN_DATA,LoanData,loanId,loanId);
             LoanData data = {userId,loanId,0,amount,0,INACTIVE};
@@ -161,15 +152,16 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
         }
         case SUBMIT_FEEDBACK: {
             //Args: int userId, char* feedback;
-            int userId = va_arg(ptr,int);
-            char* feedback = va_arg(ptr,char*);
+            int userId = dataBlock.id;
+            char feedback[1024];
+            strcpy(feedback,(char*)dataBlock.payload);
             FeedBack data = {userId,feedback,INACTIVE};
             writeRecord(FEEDBACK,data);    
             break;
         }
         case ACTIVATE_USER: {
             //Args: int userId;
-            int userId = va_arg(ptr,int);
+            int userId = dataBlock.id;
             UserRecord data;
             readRecord(USER_REPO,userId,data);
             data.isActive = ACTIVE;
@@ -178,7 +170,7 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
         }
         case DEACTIVATE_USER: {
             //Args: int userId;
-            int userId = va_arg(ptr,int);
+            int userId = dataBlock.id;
             UserRecord data;
             readRecord(USER_REPO,userId,data);
             data.isActive = INACTIVE;
@@ -187,8 +179,9 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
         }
         case ASSIGN_BANKER_FOR_LOAN: {
             //Args: int loanId, int bankerId
-            int loanId = va_arg(ptr,int);
-            int bankerId = va_arg(ptr,int);
+            int loanId = dataBlock.id;
+            int bankerId;
+            initPayload(int,bankerId,dataBlock);
             LoanData data;
             readRecord(LOAN_DATA,loanId,data);
             data.assignedBankerId = bankerId;
@@ -199,4 +192,5 @@ DataBlock runBankingQuery(DataBlock dataBlock,...) {
             printf("Invalid function type\n");
             break;
     }
+    return blockToReturn;
 }

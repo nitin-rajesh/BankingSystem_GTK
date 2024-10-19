@@ -4,8 +4,8 @@
 
 int main(){
 
-    Usertype role = ADMIN;
-
+    Usertype role = CUSTOMER;
+    
     UserRecord data = {0,"hello_db","hello_pwd","Hello From Crud","hello.3@email.com",role,1};
 
     DataBlock dataBlock = {ADD_USER_ENTRY,0,0.0,NULL};
@@ -13,24 +13,14 @@ int main(){
 
     runBankingQuery(dataBlock);
 
-    // writeRecord(USER_REPO,data);
+    dataBlock.crudOp = GET_USERS_BY_ROLE;
+    copyToPayload(role,dataBlock);
+    DataBlock retBlock = runBankingQuery(dataBlock);
 
-    // readLastRecord(USER_REPO,data);
-
-    // int userId = data.userId;
-
-    // UserRecord newdata = {userId,"hi_lolz","hello_pwd","New Hi","hello.3@email.com",role,1};
-
-    // writeRecordAt(USER_REPO,userId,newdata,UserRecord);
-
-    UserRecord *records = malloc(getRecSize(USER_REPO));
-
-    readAllRecords(USER_REPO,role,records);
+    UserRecord *records = (UserRecord*)retBlock.payload;
 
     for(int i = 0; records[i].role == role; i++){
         printf("%d - %s - %d\n",records[i].userId,records[i].fullname,records[i].role);
     }
-
-    //printf("\nBalance: %lf\n",balance);
 
 }

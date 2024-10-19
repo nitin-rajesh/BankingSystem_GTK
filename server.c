@@ -36,6 +36,12 @@ void handleClient(int clientSocket) {
 }
 
 int main() {
+    int uid;
+    int arr[20];
+    printf("Elements: %d\n",sizeof(arr)/sizeof(uid));
+
+    return 0;
+
     int serverSocket, clientSocket;
     struct sockaddr_in serverAddr, clientAddr;
     socklen_t addrLen = sizeof(clientAddr);
