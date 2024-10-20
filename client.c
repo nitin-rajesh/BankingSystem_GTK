@@ -33,7 +33,7 @@ int main() {
     UserRecord *records = (UserRecord*)retBlock.payload;
 
     for(int i = 0; records[i].role == role; i++)
-        printf("%d - %s - %d\n",records[i].userId,records[i].fullname,records[i].role); 
+        printf("%d - %s - %d\n",records[i].userId,records[i].username,records[i].role); 
 
     close(clientSocket);
     return 0;

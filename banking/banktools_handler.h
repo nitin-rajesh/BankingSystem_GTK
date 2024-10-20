@@ -8,7 +8,7 @@
 
 DataBlock runBankingQuery(DataBlock dataBlock) {
 
-    DataBlock blockToReturn;
+    DataBlock blockToReturn = {0,0.0,0,0,NULL};
 
     printf("Running banking query\n");
 
@@ -60,9 +60,9 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
             double balance = 0.0;
             TxnLogs logs[getArrSize(TXN_LOGS,TxnLogs)];
             readAllRecords(TXN_LOGS,userId,logs);
+            printf("Retrieved txt logs\n");
 
-            int i = 0;
-            while(logs[i].userId > 0){
+            for(int i = 0; logs[i].userId > 0;i++){
                 balance += logs[i].txnAmount;
             }
             blockToReturn.amount = balance;

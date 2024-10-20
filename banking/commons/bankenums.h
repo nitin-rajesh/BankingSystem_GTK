@@ -39,4 +39,38 @@ typedef enum functiontype{
     ASSIGN_BANKER_FOR_LOAN
 } FunctionType;
 
+const char* get_txn_type_name(TxnType txn) {
+    switch (txn) {
+        case WITHDRAWAL:
+            return "WITHDRAWAL";
+        case DEPOSIT:
+            return "DEPOSIT";
+        case LOAN_REQ:
+            return "LOAN_REQ";
+        case LOAN_PAYOFF:
+            return "LOAN_PAYOFF";
+        case TRANSFER:
+            return "TRANSFER";
+        default:
+            return "UNKNOWN";
+    }
+}
+
+const char* get_usertype_name(Usertype role) {
+    switch (role) {
+        case CUSTOMER:
+            return "CUSTOMER";
+        case BANKER:
+            return "BANKER";
+        case MANAGER:
+            return "MANAGER";
+        case ADMIN:
+            return "ADMIN";
+        case NA:
+            return "N/A";
+        default:
+            return "UNKNOWN";
+    }
+}
+
 #endif

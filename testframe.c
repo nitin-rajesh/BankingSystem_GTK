@@ -7,16 +7,33 @@ int main(){
 
     validateUser("hello_cs","hello_pwd");
 
-    DataBlock dataBlock = {GET_USERS_BY_ROLE,0,0.0,0,NULL};
-    Usertype role = CUSTOMER;
-    copyToPayload(role,dataBlock);
+    DataBlock block = {GET_BALANCE,getUserId(),0,0,NULL};
 
-    DataBlock* rspBlock = queryBankingServer(&dataBlock);
+    DataBlock *logs = queryBankingServer(&block);
+    
+    char msg[128] = "";
 
-    UserRecord *records = (UserRecord*)rspBlock->payload;
+    snprintf(msg, 128, "Account Balance:\t%0.2f", logs->amount);
+    printf("%s",msg);
 
-    for(int i = 0; records[i].role > 0; i++){
-        printf("%d - %s - %d\n",records[i].userId,records[i].fullname,records[i].role);
+    free(logs);
+
+    return 0;
+
+    DataBlock dataBlock = {DEPOSIT_CASH,getUserId(),101.0,0,NULL};
+    // Usertype role = CUSTOMER;
+    // copyToPayload(role,dataBlock);
+
+    DataBlock *rspBlock = queryBankingServer(&dataBlock);
+
+    DataBlock d2block = {GET_TXN_HISTORY,getUserId(),100.0,0,NULL};
+
+    rspBlock = queryBankingServer(&d2block);
+
+    TxnLogs *txnLogs = (TxnLogs*)rspBlock->payload;
+
+    for(int i = 0; txnLogs[i].userId > 0; i++){
+        printf("%s\t:%0.2f\n", get_txn_type_name(txnLogs[i].transaction), txnLogs[i].txnAmount);
     }
 
     // Usertype role = CUSTOMER;
