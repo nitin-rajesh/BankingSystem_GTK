@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.0"/>
+  
+  <object class="GtkWindow" id="main_window">
+    <property name="title">Banking System</property>
+    <property name="default-width">500</property>
+    <property name="default-height">300</property>
+    <property name="window-position">center</property>
+
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <property name="margin">10</property>
+
+        <!-- Balance Label -->
+        <child>
+          <object class="GtkLabel" id="balance_label">
+            <property name="label">Balance</property>
+            <attributes>
+              <attribute name="scale" value="1.5"/>
+            </attributes>
+          </object>
+        </child>
+
+        <!-- Button Row: Transactions, Loans, Refresh -->
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">10</property>
+
+            <child>
+              <object class="GtkButton" id="customers_button">
+                <property name="label">Customers</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="bankers_button">
+                <property name="label">Bankers</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="loans_button">
+                <property name="label">Loans</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <!-- Main Content: List View and Control Buttons -->
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">10</property>
+
+            <!-- List View -->
+            <child>
+              <object class="GtkScrolledWindow" id="scrolled_window">
+                <property name="hscrollbar-policy">automatic</property>
+                <property name="vscrollbar-policy">automatic</property>
+
+                <child>
+                  <object class="GtkTreeView" id="list_view">
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                  </object>
+                </child>
+              </object>  
+            </child>
+
+            <!-- Control Buttons -->
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">10</property>
+
+                <child>
+                  <object class="GtkButton" id="add_customer">
+                    <property name="label">Activate customer</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="mod_customer">
+                    <property name="label">Deactivate customer</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="assign_loan">
+                    <property name="label">Assign loan</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

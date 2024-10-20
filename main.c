@@ -1,7 +1,7 @@
 #include<gtk/gtk.h>
 #include<string.h>
 #include"banking_client.h" 
-#include"banker_event_handlers.h"
+#include"manager_event_handlers.h"
 
 
 void show_alert(GtkWidget *parent_window, char *alertmsg) {
@@ -109,13 +109,12 @@ void open_new_manager_window(GtkWidget *first_window) {
     initTreeViewAndLabel(builder,window);
 
     // Connect buttons to their event handlers
-    g_signal_connect(gtk_builder_get_object(builder, "withdraw_button"), "clicked", G_CALLBACK(on_withdraw_clicked), NULL);
-    g_signal_connect(gtk_builder_get_object(builder, "deposit_button"), "clicked", G_CALLBACK(on_deposit_clicked), NULL);
-    g_signal_connect(gtk_builder_get_object(builder, "transfer_button"), "clicked", G_CALLBACK(on_transfer_clicked), NULL);
-    g_signal_connect(gtk_builder_get_object(builder, "loan_req_button"), "clicked", G_CALLBACK(on_loan_req_clicked), NULL);
-    g_signal_connect(gtk_builder_get_object(builder, "transactions_button"), "clicked", G_CALLBACK(on_transactions_clicked), NULL);
-    g_signal_connect(gtk_builder_get_object(builder, "loans_button"), "clicked", G_CALLBACK(on_loans_clicked), NULL);
-    g_signal_connect(gtk_builder_get_object(builder, "refresh_button"), "clicked", G_CALLBACK(on_refresh_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "customers_button"), "clicked", G_CALLBACK(on_customers_button_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "bankers_button"), "clicked", G_CALLBACK(on_bankers_button_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "loans_button"), "clicked", G_CALLBACK(on_loans_button_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "activate_customer"), "clicked", G_CALLBACK(on_activate_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "deactivate_customer"), "clicked", G_CALLBACK(on_deactivate_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "assign_loan"), "clicked", G_CALLBACK(on_assign_loan_clicked), NULL);
 
     // Connect the destroy signal to quit the GTK main loop
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
