@@ -51,6 +51,7 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
                 TxnLogs loanBalance = {data.userId,
                     data.loanRequest, time(NULL), LOAN_REQ};
                 writeRecord(TXN_LOGS,loanBalance);
+                writeRecordAt(LOAN_DATA,loanId,data,LoanData);
             }
             break;
         }
@@ -81,6 +82,14 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
             int userId = dataBlock.id;
             LoanData logs[getArrSize(LOAN_DATA,LoanData)];
             readAllRecords(LOAN_DATA,userId,logs); 
+            copyArrToPayload(logs,blockToReturn);           
+            break;
+        }
+        case GET_ACTIVE_LOANS: {
+            //Args: LoanData* loanDataArr
+            boolean loanApproved = INACTIVE;
+            LoanData logs[getArrSize(LOAN_DATA,LoanData)];
+            readAllRecords(LOAN_DATA,loanApproved,logs); 
             copyArrToPayload(logs,blockToReturn);           
             break;
         }
@@ -142,7 +151,7 @@ DataBlock runBankingQuery(DataBlock dataBlock) {
             TxnLogs data = {userId,-amount,time(NULL),TRANSFER};
             writeRecord(TXN_LOGS,data);    
             userId = destUserId;
-            TxnLogs newdata = {userId,amount,time(NULL),DEPOSIT};
+            TxnLogs newdata = {userId,amount,time(NULL),TRANSFER};
             writeRecord(TXN_LOGS,newdata);
             break;
         }

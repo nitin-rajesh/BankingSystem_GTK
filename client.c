@@ -9,14 +9,14 @@ int main() {
     struct sockaddr_in serverAddr;
     initializeClient(SERVER_IP,SERVER_PORT,&clientSocket);
 
-    Usertype role = CUSTOMER;
+    Usertype role = ADMIN;
 
-    UserRecord data = {0,"hello_cs","hello_pwd","Hello From Client","hello.3@email.com",role,1};
+    UserRecord data = {0,"hello_sup","pwd","Hello Sup","hello.3@email.com",role,1};
 
     DataBlock dataBlock = {ADD_USER_ENTRY,0,0.0,0,NULL};
-    copyToPayload(data,dataBlock);
-
     DataBlock retBlock;
+
+    copyToPayload(data,dataBlock);
 
     sendDataBlock(clientSocket,&dataBlock);
 
@@ -33,7 +33,7 @@ int main() {
     UserRecord *records = (UserRecord*)retBlock.payload;
 
     for(int i = 0; records[i].role == role; i++)
-        printf("%d - %s - %d\n",records[i].userId,records[i].username,records[i].role); 
+        printf("%d - %s %s- %d\n",records[i].userId,records[i].username,records[i].password,records[i].role); 
 
     close(clientSocket);
     return 0;

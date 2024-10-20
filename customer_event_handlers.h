@@ -1,3 +1,6 @@
+#ifndef CUSTOMER_EVENT_HANDLERS
+#define CUSTOMER_EVENT_HANDLERS
+
 #include<gtk/gtk.h>
 #include<stdlib.h>
 #include"banking_client.h"
@@ -36,11 +39,15 @@ void request_for_loan(GtkDialog *dialog, gint response_id, GtkEntry *entry) {
 
 void transfer_funds(GtkDialog *dialog, gint response_id, GtkEntry *entry) {
     if (response_id == GTK_RESPONSE_OK) {
-        const char *amount = gtk_entry_get_text(entry);  
-        DataBlock block = {APPLY_FOR_LOAN,getUserId(),atoi(amount),0,NULL};
+        int destUserId; double amount;
+        const char *transfer = gtk_entry_get_text(entry);  
+        sscanf(transfer,"%d:%lf",&destUserId,&amount);
+        DataBlock block = {TRANSFER_CASH,getUserId(),amount,0,NULL};
+        copyToPayload(destUserId,block);
         free(queryBankingServer(&block));
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));  
+
 }
 
 // Fn to clear list view contents
@@ -155,12 +162,12 @@ void on_transactions_clicked(GtkButton *button, gpointer user_data) {
 
     TxnLogs *txnLogs = (TxnLogs*)logs->payload;
 
-    char msg[128] = "";
+    char msg[256] = "";
 
     for(int i = 0; txnLogs[i].userId > 0; i++){
         if((int)txnLogs[i].txnAmount == 0)
             continue;
-        snprintf(msg, 128, "%s:\t%0.2f", get_txn_type_name(txnLogs[i].transaction), txnLogs[i].txnAmount);
+        snprintf(msg, 256, "%s:\t%0.2f", get_txn_type_name(txnLogs[i].transaction), txnLogs[i].txnAmount);
         add_message_to_list(msg);
     }
 
@@ -177,13 +184,13 @@ void on_loans_clicked(GtkButton *button, gpointer user_data) {
 
     LoanData *loanData= (LoanData*)logs->payload;
 
-    char msg[128] = "";
+    char msg[256] = "";
 
     for(int i = 0; loanData[i].userId > 0; i++){
         if((int)loanData[i].loanRequest == 0)
             continue;
 
-        snprintf(msg, 128, "Loan %d\t Amt:\t%0.2f\t Status: %s",
+        snprintf(msg, 256, "Loan %d\t Amt:\t%0.2f\t Status: %s",
             loanData[i].loanId,loanData[i].loanRequest,loanData[i].loanApproved?"APPROVED":"PENDING");
         add_message_to_list(msg);
     }
@@ -198,11 +205,13 @@ void on_refresh_clicked(GtkButton *button, gpointer user_data) {
 
     DataBlock *logs = queryBankingServer(&block);
     
-    char msg[128] = "";
+    char msg[256] = "";
 
-    snprintf(msg, 128, "Account Balance:\t%0.2f", logs->amount);
+    snprintf(msg, 256, "Account Balance:\t%0.2f", logs->amount);
     add_message_to_list(msg);
 
     free(logs);
 
 }
+
+#endif

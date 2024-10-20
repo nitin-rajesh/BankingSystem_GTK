@@ -31,8 +31,8 @@
             <property name="spacing">10</property>
 
             <child>
-              <object class="GtkButton" id="transactions_button">
-                <property name="label">Transactions</property>
+              <object class="GtkButton" id="customers_button">
+                <property name="label">Customers</property>
               </object>
             </child>
             <child>
@@ -41,8 +41,8 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton" id="refresh_button">
-                <property name="label">Balance</property>
+              <object class="GtkButton" id="transactions_button">
+                <property name="label">Transactions</property>
               </object>
             </child>
           </object>
@@ -76,23 +76,18 @@
                 <property name="spacing">10</property>
 
                 <child>
-                  <object class="GtkButton" id="withdraw_button">
-                    <property name="label">Withdraw</property>
+                  <object class="GtkButton" id="add_customer">
+                    <property name="label">Add customer</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="deposit_button">
-                    <property name="label">Deposit</property>
+                  <object class="GtkButton" id="mod_customer">
+                    <property name="label">Modify customer</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="transfer_button">
-                    <property name="label">Transfer</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="loan_req_button">
-                    <property name="label">Loan Req</property>
+                  <object class="GtkButton" id="process_loan">
+                    <property name="label">Process loan</property>
                   </object>
                 </child>
               </object>

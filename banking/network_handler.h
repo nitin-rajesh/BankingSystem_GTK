@@ -46,7 +46,11 @@ int sendDataBlock(int sockfd, DataBlock* block){
     }
 
     printf("Sent %ld bytes of data\n",offset);
+    printf("Sending DataBlock: crudOp=%d, id=%d, amount=%.2f \npayload:%ld bytes\n",
+           block->crudOp, block->id, block->amount, block->plSize);
+
     free(buffer);
+
     return 0;
 }
 

@@ -1,7 +1,7 @@
 #include<gtk/gtk.h>
 #include<string.h>
 #include"banking_client.h" 
-#include"event_handlers.h"
+#include"banker_event_handlers.h"
 
 
 void show_alert(GtkWidget *parent_window, char *alertmsg) {
@@ -23,15 +23,8 @@ void show_alert(GtkWidget *parent_window, char *alertmsg) {
     gtk_widget_destroy(dialog);
 }
 
-
-void open_new_window(GtkWidget *first_window, const char *ui_page) {
-    GtkBuilder *builder;
-    GtkWidget *window;
+void initTreeViewAndLabel(GtkBuilder *builder, GtkWidget *window){
     GtkTreeView *tree_view;
-    GError *error = NULL;
-    
-    builder = gtk_builder_new_from_file(ui_page);
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
 
     // Get the TreeView widget from the builder
     tree_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "list_view"));
@@ -52,6 +45,18 @@ void open_new_window(GtkWidget *first_window, const char *ui_page) {
     snprintf(msg,128,"Account %d",getUserId());
     gtk_label_set_text(balance_label,msg);
 
+}
+
+void open_new_customer_window(GtkWidget *first_window) {
+    const char *ui_page = "bankpages/customer_home.ui";
+    GtkBuilder *builder;
+    GtkWidget *window;
+    
+    builder = gtk_builder_new_from_file(ui_page);
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+
+    initTreeViewAndLabel(builder,window);
+
     // Connect buttons to their event handlers
     g_signal_connect(gtk_builder_get_object(builder, "withdraw_button"), "clicked", G_CALLBACK(on_withdraw_clicked), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "deposit_button"), "clicked", G_CALLBACK(on_deposit_clicked), NULL);
@@ -66,7 +71,83 @@ void open_new_window(GtkWidget *first_window, const char *ui_page) {
 
     // Show the window
     gtk_widget_show_all(window);
+}
 
+void open_new_banker_window(GtkWidget *first_window) {
+    const char *ui_page = "bankpages/banker_home.ui";
+    GtkBuilder *builder;
+    GtkWidget *window;
+    
+    builder = gtk_builder_new_from_file(ui_page);
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+
+    initTreeViewAndLabel(builder,window);
+
+    // Connect buttons to their event handlers
+    g_signal_connect(gtk_builder_get_object(builder, "customers_button"), "clicked", G_CALLBACK(on_customers_button_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "loans_button"), "clicked", G_CALLBACK(on_loans_button_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "transactions_button"), "clicked", G_CALLBACK(on_transactions_button_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "add_customer"), "clicked", G_CALLBACK(on_add_customer_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "mod_customer"), "clicked", G_CALLBACK(on_mod_customer_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "process_loan"), "clicked", G_CALLBACK(on_process_loan_clicked), NULL);
+
+    // Connect the destroy signal to quit the GTK main loop
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Show the window
+    gtk_widget_show_all(window);
+}
+
+void open_new_manager_window(GtkWidget *first_window) {
+    const char *ui_page = "bankpages/manager_home.ui";
+    GtkBuilder *builder;
+    GtkWidget *window;
+    
+    builder = gtk_builder_new_from_file(ui_page);
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+
+    initTreeViewAndLabel(builder,window);
+
+    // Connect buttons to their event handlers
+    g_signal_connect(gtk_builder_get_object(builder, "withdraw_button"), "clicked", G_CALLBACK(on_withdraw_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "deposit_button"), "clicked", G_CALLBACK(on_deposit_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "transfer_button"), "clicked", G_CALLBACK(on_transfer_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "loan_req_button"), "clicked", G_CALLBACK(on_loan_req_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "transactions_button"), "clicked", G_CALLBACK(on_transactions_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "loans_button"), "clicked", G_CALLBACK(on_loans_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "refresh_button"), "clicked", G_CALLBACK(on_refresh_clicked), NULL);
+
+    // Connect the destroy signal to quit the GTK main loop
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Show the window
+    gtk_widget_show_all(window);
+}
+
+void open_new_admin_window(GtkWidget *first_window) {
+    const char *ui_page = "bankpages/admin_home.ui";
+    GtkBuilder *builder;
+    GtkWidget *window;
+    
+    builder = gtk_builder_new_from_file(ui_page);
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+
+    initTreeViewAndLabel(builder,window);
+
+    // Connect buttons to their event handlers
+    g_signal_connect(gtk_builder_get_object(builder, "withdraw_button"), "clicked", G_CALLBACK(on_withdraw_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "deposit_button"), "clicked", G_CALLBACK(on_deposit_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "transfer_button"), "clicked", G_CALLBACK(on_transfer_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "loan_req_button"), "clicked", G_CALLBACK(on_loan_req_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "transactions_button"), "clicked", G_CALLBACK(on_transactions_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "loans_button"), "clicked", G_CALLBACK(on_loans_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "refresh_button"), "clicked", G_CALLBACK(on_refresh_clicked), NULL);
+
+    // Connect the destroy signal to quit the GTK main loop
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Show the window
+    gtk_widget_show_all(window);
 }
 
 void on_login_button_clicked(GtkButton *button, gpointer user_data) {
@@ -74,22 +155,46 @@ void on_login_button_clicked(GtkButton *button, gpointer user_data) {
     GtkBuilder *builder = GTK_BUILDER(user_data);
     GtkEntry *username_entry = GTK_ENTRY(gtk_builder_get_object(builder, "username_entry"));
     GtkEntry *password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
-    GtkComboBoxText *user_type_combo = GTK_COMBO_BOX_TEXT(gtk_builder_get_object(builder, "user_type_combo"));
+    GtkComboBox *user_type_combo = GTK_COMBO_BOX(gtk_builder_get_object(builder, "user_type_combo"));
 
     GtkWidget *first_window = GTK_WIDGET(gtk_builder_get_object(builder, "login_window"));
     // Get text from the entries and combo box
     const gchar *username = gtk_entry_get_text(username_entry);
     const gchar *password = gtk_entry_get_text(password_entry);
-    const gchar *user_type = gtk_combo_box_text_get_active_text(user_type_combo);
+    const gint user_type = gtk_combo_box_get_active(user_type_combo);
 
 
     // Print the collected data
     g_print("Username: %s\n", username);
-    g_print("Password: %s\n", password);
-    g_print("User Type: %s\n", user_type ? user_type : "None");
+    //g_print("Password: %s\n", password);
+    g_print("User Type: %d\n", user_type);
 
-    if(validateUser(username,password))
-        open_new_window(first_window,"bankpages/customer_home.ui");
+    Usertype role;
+
+    if((role = validateUser(username,password))){
+        if(role == ADMIN)
+            role = user_type+1;
+
+        switch(role){
+            case CUSTOMER: {
+                open_new_customer_window(first_window);
+                break;
+            }
+            case BANKER: {
+                open_new_banker_window(first_window);
+                break;
+            }    
+            case MANAGER: {
+                open_new_manager_window(first_window);
+                break;
+            }    
+            case ADMIN: {
+                open_new_admin_window(first_window);
+                break;
+            }    
+        }
+        gtk_widget_set_sensitive(first_window, FALSE);
+    }
 
     else show_alert(first_window,"Invalid login credentials");
 

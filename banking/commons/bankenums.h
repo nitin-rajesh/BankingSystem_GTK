@@ -26,6 +26,7 @@ typedef enum functiontype{
     GET_BALANCE,
     GET_TXN_HISTORY,
     GET_LOAN_DATA,
+    GET_ACTIVE_LOANS,
     GET_USER_RECORD,
     GET_USERS_BY_ROLE,
     GET_USER_BY_NAME,

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "network_handler.h": "c",
-        "banking_client.h": "c"
+        "banking_client.h": "c",
+        "banker_event_handlers.h": "c"
     }
 }

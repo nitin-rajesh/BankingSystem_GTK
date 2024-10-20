@@ -15,6 +15,7 @@ void handleClientQuery(int clientSocket){
     // Communication loop: read and send messages back to the client
     while ((blocksize = receiveDataBlock(clientSocket, dataBlock)) > 0) {
         
+        printf("Crud op received: %d\n",dataBlock->crudOp);
         DataBlock retblock = runBankingQuery(*dataBlock);
 
         printf("Returning data of size %ld\n", getBlockSize(retblock));
