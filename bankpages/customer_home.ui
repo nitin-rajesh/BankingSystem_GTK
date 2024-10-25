@@ -45,6 +45,11 @@
                 <property name="label">Balance</property>
               </object>
             </child>
+            <child>
+              <object class="GtkButton" id="feedback_button">
+                <property name="label">Feedback</property>
+              </object>
+            </child>
           </object>
         </child>
 

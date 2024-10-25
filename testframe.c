@@ -8,7 +8,7 @@ int main(){
     // validateUser("hello_cs","hello_pwd");
     Usertype role = CUSTOMER;
 
-    UserRecord data = {0,"hello_bk","pwd","Hello Client","hello.3@email.com",role,1};
+    UserRecord data = {0,"hello_temp","pwd","Hello Temp","hello.3@email.com",role,1};
 
     DataBlock dataBlock = {ADD_USER_ENTRY,2,0.0,0,NULL};
     copyToPayload(data,dataBlock);
@@ -24,8 +24,6 @@ int main(){
 
     for(int i = 0; records[i].role == role; i++)
         printf("%d - %s %s- %d\n",records[i].userId,records[i].username,records[i].password,records[i].role); 
-
-
 
     // DataBlock block = {GET_BALANCE,getUserId(),0,0,NULL};
 

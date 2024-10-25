@@ -188,7 +188,7 @@ void on_mod_customer_clicked(GtkButton *button, gpointer user_data) {
 // Handler for "Process Loan" button
 void on_process_loan_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *dialog = gtk_dialog_new_with_buttons(
-        "Enter customer info - <id> <username> <password> <email ID>",
+        "Enter Loan ID",
         GTK_WINDOW(user_data),
         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
         "_OK", GTK_RESPONSE_OK,

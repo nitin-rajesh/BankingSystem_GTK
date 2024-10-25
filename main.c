@@ -65,6 +65,7 @@ void open_new_customer_window(GtkWidget *first_window) {
     g_signal_connect(gtk_builder_get_object(builder, "transactions_button"), "clicked", G_CALLBACK(on_transactions_clicked), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "loans_button"), "clicked", G_CALLBACK(on_loans_clicked), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "refresh_button"), "clicked", G_CALLBACK(on_refresh_clicked), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "feedback_button"), "clicked", G_CALLBACK(on_feedback_clicked), NULL);
 
     // Connect the destroy signal to quit the GTK main loop
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);

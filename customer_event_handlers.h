@@ -10,6 +10,18 @@ GtkListStore *list_store;
 
 /* Utility functions */
 
+void send_feedback(GtkDialog *dialog, gint response_id, GtkEntry *entry) {
+    if (response_id == GTK_RESPONSE_OK) {
+        const char *feedback = gtk_entry_get_text(entry);  
+        DataBlock block = {SUBMIT_FEEDBACK,getUserId(),0.0,0,NULL};
+        char feedbackArr[256];
+        strcpy(feedbackArr,feedback);
+        copyArrToPayload(feedbackArr,block);
+        free(queryBankingServer(&block));
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));  
+}
+
 void deposit_amount_in_bank(GtkDialog *dialog, gint response_id, GtkEntry *entry) {
     if (response_id == GTK_RESPONSE_OK) {
         const char *amount = gtk_entry_get_text(entry);  
@@ -213,5 +225,26 @@ void on_refresh_clicked(GtkButton *button, gpointer user_data) {
     free(logs);
 
 }
+
+void on_feedback_clicked(GtkButton *button, gpointer user_data) {
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+        "Enter user feedback",
+        GTK_WINDOW(user_data),
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        "_OK", GTK_RESPONSE_OK,
+        "_Cancel", GTK_RESPONSE_CANCEL,
+        NULL
+    );
+
+    GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    GtkWidget *entry = gtk_entry_new();  
+
+    gtk_container_add(GTK_CONTAINER(content_area), entry);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(transfer_funds), entry);
+
+    gtk_widget_show_all(dialog);
+}
+
 
 #endif
